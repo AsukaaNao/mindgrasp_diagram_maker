@@ -1,0 +1,7 @@
+{
+  "name": "MindGrasp Diagram",
+  "description": "A minimal, command-driven diagram editor designed for future computer vision integration.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
