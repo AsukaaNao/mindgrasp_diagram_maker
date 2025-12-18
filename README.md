@@ -1,4 +1,4 @@
-Mindgrasp Diagram Maker
+# Mindgrasp Diagram Maker
 
 Mindgrasp Diagram Maker is an interactive diagram creation application that introduces a new way of working with visual ideas. Instead of relying solely on traditional mouse and keyboard inputs, this app leverages Computer Vision–based hand gesture recognition to control diagram interactions naturally and intuitively.
 
