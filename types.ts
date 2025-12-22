@@ -69,8 +69,8 @@ export interface FileManager {
 
 // --- Computer Vision / Backend Types ---
 
-// Updated to match backend strings
-export type HandShape = 'thumbs_up' | 'thumbs_down' | 'rock' | 'palm_open' | 'fist' | 'pointing' | 'no_hand';
+// Updated to the new gesture name requirements including the empty string ""
+export type HandShape = 'add' | 'delete' | 'connecting' | 'hover' | 'grabbing' | 'select' | 'no_hand' | '';
 
 export interface GesturePrediction {
   gesture: HandShape;

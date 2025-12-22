@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { DiagramNode } from '../types';
 
@@ -31,14 +30,14 @@ export const ConnectionComponent: React.FC<ConnectionComponentProps> = ({
 
   return (
     <g onClick={handleClick} className="cursor-pointer group">
-      {/* Hit Area */}
+      {/* Hit Area - Increased from 20 to 40 for much better accessibility */}
       <line
         x1={x1}
         y1={y1}
         x2={x2}
         y2={y2}
         stroke="transparent"
-        strokeWidth="20"
+        strokeWidth="40"
       />
       
       {/* Visible line */}

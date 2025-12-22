@@ -1,4 +1,4 @@
-import { GesturePrediction } from '../types';
+import { GesturePrediction, HandShape } from '../types';
 
 let socket: WebSocket | null = null;
 let canvas: HTMLCanvasElement | null = null;
@@ -6,21 +6,20 @@ let ctx: CanvasRenderingContext2D | null = null;
 
 const WS_URL = 'ws://103.253.145.149:8000/ws/gesture/'; 
 
+// Gestures that trigger specific actions
+const ACTION_GESTURES: HandShape[] = ['add', 'delete', 'connecting', 'hover', 'grabbing', 'select'];
+
 export const GestureService = {
   connect: (
     onPrediction: (data: GesturePrediction) => void,
     onConnected: () => void,
     onError: (err: Event) => void
   ) => {
-    // If we are already connected or connecting to the SAME URL, don't restart
     if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
-      console.log('Gesture WebSocket already active or connecting');
       return;
     }
 
-    if (socket) {
-      socket.close();
-    }
+    if (socket) socket.close();
     
     try {
         socket = new WebSocket(WS_URL);
@@ -33,22 +32,32 @@ export const GestureService = {
         socket.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                if (data && data.wrist && typeof data.wrist.x === 'number') {
-                    onPrediction(data as GesturePrediction);
+                if (data && data.wrist) {
+                    const rawGesture = data.gesture;
+                    
+                    let sanitizedGesture: HandShape = 'no_hand';
+                    
+                    if (rawGesture === 'no_hand') {
+                      sanitizedGesture = 'no_hand';
+                    } else if (rawGesture === '' || !ACTION_GESTURES.includes(rawGesture as HandShape)) {
+                      // Hand is detected, but gesture is unknown or empty
+                      sanitizedGesture = '';
+                    } else {
+                      sanitizedGesture = rawGesture as HandShape;
+                    }
+                        
+                    onPrediction({
+                        gesture: sanitizedGesture,
+                        wrist: data.wrist
+                    });
                 }
             } catch (e) {
                 console.error('Failed to parse backend response', e);
             }
         };
 
-        socket.onerror = (e) => {
-          console.error('WebSocket Error:', e);
-          onError(e);
-        };
-        
-        socket.onclose = (e) => {
-          console.log('Gesture WebSocket Closed:', e.code, e.reason);
-        };
+        socket.onerror = (e) => onError(e);
+        socket.onclose = () => console.log('Gesture WebSocket Closed');
     } catch (e) {
         console.error("Failed to initialize WebSocket", e);
     }
@@ -56,10 +65,7 @@ export const GestureService = {
 
   disconnect: () => {
     if (socket) {
-        // Only close if it's not already closed
-        if (socket.readyState !== WebSocket.CLOSED && socket.readyState !== WebSocket.CLOSING) {
-          socket.close();
-        }
+        if (socket.readyState !== WebSocket.CLOSED) socket.close();
         socket = null;
     }
   },
@@ -78,16 +84,13 @@ export const GestureService = {
             canvas.height = 480;
         }
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // JPEG compression helps significantly with throughput
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+        // Reduced quality to 0.3 for significantly faster transmission and lower latency
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.3);
         
         try {
-          socket.send(JSON.stringify({ 
-              frame: dataUrl
-          }));
+          socket.send(JSON.stringify({ frame: dataUrl }));
         } catch (err) {
-          console.error("Failed to send socket frame:", err);
+          console.error("Socket send error", err);
         }
     }
   }

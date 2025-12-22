@@ -5,9 +5,10 @@ import { ConfirmationModal } from './Feedback';
 interface LandingPageProps {
   fileManager: FileManager;
   onShowToast: (msg: string, type: 'success' | 'error' | 'info') => void;
+  onOpenTutorial: () => void;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ fileManager, onShowToast }) => {
+export const LandingPage: React.FC<LandingPageProps> = ({ fileManager, onShowToast, onOpenTutorial }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -69,16 +70,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ fileManager, onShowToa
           <div className="flex items-center gap-2 mb-8">
             <div className="w-8 h-8 bg-black dark:bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">G</div>
             <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-blue-400 dark:to-purple-500">
-              GestureFlow
+              MindGrasp
             </h1>
           </div>
 
-          <div className="space-y-1">
+          <nav className="space-y-1">
             <button className="w-full flex items-center gap-3 px-3 py-2 bg-gray-100 dark:bg-white/5 text-gray-900 dark:text-white rounded-md text-sm font-medium border border-transparent dark:border-white/5">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" /></svg>
                 All Files
             </button>
-          </div>
+            <button 
+              onClick={onOpenTutorial}
+              className="w-full flex items-center gap-3 px-3 py-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-md text-sm font-medium transition-colors"
+            >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                How to Use
+            </button>
+          </nav>
         </div>
 
         <div className="mt-auto p-6 border-t border-gray-200 dark:border-gray-800">
