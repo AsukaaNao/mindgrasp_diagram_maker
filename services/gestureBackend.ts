@@ -4,7 +4,7 @@ let socket: WebSocket | null = null;
 let canvas: HTMLCanvasElement | null = null;
 let ctx: CanvasRenderingContext2D | null = null;
 
-const WS_URL = 'ws://103.253.145.149:8000/ws/gesture/'; 
+const WS_URL = 'https://mindgrasp.online:8000/ws/gesture/'; 
 
 // Gestures that trigger specific actions
 const ACTION_GESTURES: HandShape[] = ['add', 'delete', 'connecting', 'hover', 'grabbing', 'select'];
